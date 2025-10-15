@@ -1,0 +1,11 @@
+﻿[
+    {
+        "cookie": "your_cookie_here",
+        "device_id": "1234567890",
+        "tea_uuid": "tea_uuid_value",
+        "web_id": "web_id_value",
+        "room_id": "room_id_value",
+        "x_flow_trace": "trace_value",
+        "guest": false
+    }
+]
