@@ -14,6 +14,7 @@ type Config struct {
 	HTTPClientTimeout time.Duration
 	ReadTimeout       time.Duration
 	WriteTimeout      time.Duration
+	AuthToken         string
 }
 
 // Load 从环境变量加载配置，并在缺省时应用合理的默认值。
@@ -24,14 +25,16 @@ type Config struct {
 //	HTTP_CLIENT_TIMEOUT_S - 上游 HTTP 请求超时时间，单位秒（默认 300）
 //	HTTP_READ_TIMEOUT_S   - 服务器读取超时时间，单位秒（默认 30）
 //	HTTP_WRITE_TIMEOUT_S  - 服务器写入超时时间，单位秒（默认 30）
+//	AUTH_TOKEN            - 接口认证令牌，留空则关闭认证
 func Load() Config {
 	return Config{
 		Addr:              getenv("HTTP_ADDR", ":8000"),
 		SessionConfigPath: getenv("SESSION_CONFIG", "session.json"),
 		ShutdownTimeout:   parseDurationSeconds("SHUTDOWN_TIMEOUT_SEC", 10),
 		HTTPClientTimeout: parseDurationSeconds("HTTP_CLIENT_TIMEOUT_S", 300),
-		ReadTimeout:       parseDurationSeconds("HTTP_READ_TIMEOUT_S", 300),
-		WriteTimeout:      parseDurationSeconds("HTTP_WRITE_TIMEOUT_S", 300),
+		ReadTimeout:       parseDurationSeconds("HTTP_READ_TIMEOUT_S", 30),
+		WriteTimeout:      parseDurationSeconds("HTTP_WRITE_TIMEOUT_S", 30),
+		AuthToken:         getenv("AUTH_TOKEN", ""),
 	}
 }
 

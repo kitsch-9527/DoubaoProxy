@@ -62,6 +62,9 @@ DoubaoProxy 是一个使用 Go 编写的豆包非官方代理服务，复刻自 
 | `HTTP_CLIENT_TIMEOUT_S` | `300`          | 调用豆包接口的超时时间（秒） |
 | `HTTP_READ_TIMEOUT_S`   | `30`           | 服务读取请求的超时（秒）     |
 | `HTTP_WRITE_TIMEOUT_S`  | `30`           | 服务写响应的超时（秒）       |
+| `AUTH_TOKEN`            | 空             | 接口访问令牌，设置后启用鉴权 |
+
+> `AUTH_TOKEN` 是服务端环境变量，不是请求头名称。客户端调用时请使用 `Authorization: Bearer <token>` 或 `X-API-Key: <token>` 传递令牌。
 
 在 PowerShell 中设置示例：
 
@@ -69,6 +72,7 @@ DoubaoProxy 是一个使用 Go 编写的豆包非官方代理服务，复刻自 
 $env:HTTP_CLIENT_TIMEOUT_S = "180"
 $env:HTTP_READ_TIMEOUT_S   = "60"
 $env:HTTP_WRITE_TIMEOUT_S  = "60"
+$env:AUTH_TOKEN            = "my-secret-token"
 ```
 
 ## 构建与运行
@@ -92,6 +96,28 @@ go run .
 ```
 
 服务启动后默认监听 `http://localhost:8000`。
+
+### 访问鉴权
+
+若设置了 `AUTH_TOKEN`，除 `GET /healthz` 外的全部接口都需要携带令牌访问：
+
+```powershell
+curl -X POST "http://localhost:8000/api/chat/completions" `
+     -H "Content-Type: application/json" `
+     -H "Authorization: Bearer my-secret-token" `
+     -d '{
+           "prompt": "你好，简单介绍一下自己？",
+           "guest": false
+         }'
+```
+
+也可以通过 `X-API-Key` 头传入：
+
+```powershell
+curl ... -H "X-API-Key: my-secret-token" ...
+```
+
+当令牌缺失或不匹配时，接口会返回 `401 Unauthorized`。
 
 ## API 说明
 

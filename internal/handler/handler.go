@@ -1,9 +1,11 @@
 package handler
 
 import (
+	"crypto/subtle"
 	"errors"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 
@@ -12,7 +14,11 @@ import (
 )
 
 // Register 将业务路由挂载到 gin 引擎上。
-func Register(router *gin.Engine, service *doubao.Service) {
+func Register(router *gin.Engine, service *doubao.Service, authToken string) {
+	if strings.TrimSpace(authToken) != "" {
+		router.Use(authMiddleware(authToken))
+	}
+
 	h := &handler{service: service}
 
 	router.GET("/healthz", func(c *gin.Context) {
@@ -119,4 +125,36 @@ func renderError(c *gin.Context, err error) {
 		status = http.StatusInternalServerError
 	}
 	c.JSON(status, errorResponse{Error: err.Error()})
+}
+
+func authMiddleware(token string) gin.HandlerFunc {
+	secret := []byte(strings.TrimSpace(token))
+
+	return func(c *gin.Context) {
+		// 健康检查保持开放，便于外部探活。
+		if c.Request.URL.Path == "/healthz" {
+			c.Next()
+			return
+		}
+
+		provided := extractToken(c)
+		if subtle.ConstantTimeCompare([]byte(provided), secret) != 1 {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, errorResponse{Error: "unauthorized"})
+			return
+		}
+
+		c.Next()
+	}
+}
+
+func extractToken(c *gin.Context) string {
+	authHeader := strings.TrimSpace(c.GetHeader("Authorization"))
+	if strings.HasPrefix(strings.ToLower(authHeader), "bearer ") {
+		return strings.TrimSpace(authHeader[7:])
+	}
+	if authHeader != "" {
+		return authHeader
+	}
+	apiKey := strings.TrimSpace(c.GetHeader("X-API-Key"))
+	return apiKey
 }

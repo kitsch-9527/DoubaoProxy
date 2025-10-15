@@ -31,7 +31,7 @@ func main() {
 	service := doubao.NewService(pool, cfg, logger)
 
 	srv := server.New(cfg, logger, func(r *gin.Engine) {
-		handler.Register(r, service)
+		handler.Register(r, service, cfg.AuthToken)
 	})
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
