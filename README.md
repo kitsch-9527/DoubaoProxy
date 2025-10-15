@@ -53,14 +53,15 @@ DoubaoProxy 是一个使用 Go 编写的豆包非官方代理服务，复刻自 
 
 ## 可用环境变量
 
-| 变量名 | 默认值 | 说明 |
-| --- | --- | --- |
-| `HTTP_ADDR` | `:8000` | HTTP 服务监听地址 |
-| `SESSION_CONFIG` | `session.json` | Session 配置文件路径 |
-| `SHUTDOWN_TIMEOUT_SEC` | `10` | 优雅关机等待秒数 |
-| `HTTP_CLIENT_TIMEOUT_S` | `300` | 调用豆包接口的超时时间（秒） |
-| `HTTP_READ_TIMEOUT_S` | `30` | 服务读取请求的超时（秒） |
-| `HTTP_WRITE_TIMEOUT_S` | `30` | 服务写响应的超时（秒） |
+
+| 变量名                  | 默认值         | 说明                         |
+| ----------------------- | -------------- | ---------------------------- |
+| `HTTP_ADDR`             | `:8000`        | HTTP 服务监听地址            |
+| `SESSION_CONFIG`        | `session.json` | Session 配置文件路径         |
+| `SHUTDOWN_TIMEOUT_SEC`  | `10`           | 优雅关机等待秒数             |
+| `HTTP_CLIENT_TIMEOUT_S` | `300`          | 调用豆包接口的超时时间（秒） |
+| `HTTP_READ_TIMEOUT_S`   | `30`           | 服务读取请求的超时（秒）     |
+| `HTTP_WRITE_TIMEOUT_S`  | `30`           | 服务写响应的超时（秒）       |
 
 在 PowerShell 中设置示例：
 
@@ -190,4 +191,4 @@ curl -X POST "http://localhost:8000/api/chat/completions" `
 
 ## 许可
 
-本项目沿用原仓库的 [MIT License](LICENSE)。
+[MIT License](LICENSE)。
